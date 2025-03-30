@@ -74,7 +74,7 @@ def calculate_delta(grid: list[list[int]], i: int, j: int) -> int:
     return 0
 
 
-def calculate_beta() -> int:
+def calculate_beta() -> float:
     return 0
 
 
