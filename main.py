@@ -26,6 +26,7 @@ def random_state(i: int, j: int) -> int:
 
 
 SIZE = 10 # Size of the grid
+N = SIZE**2 # number of lattice sites
 
 # Spins are represented by 0 and 1
 # 0 = down
@@ -68,8 +69,19 @@ print_grid(alternating_grid)
 
 print("\nRandom Grid:")
 print_grid(random_grid)
+#calculate_energy should be calculating the enitre energy from scratch
+#I looked up a reference online and I think I followed it pretty closely
+# I had to define N=SIZE**2 earlier
+# change %N to if statemenet for readability
+def calculate_energy(grid: list[list[int]], i: int, j: int) -> int:
+    for i in range(SIZE):
+        for j in range(SIZE):
+            S = grid[i,j]
+            neighbors = grid[(i+1)%N, j] + grid[i, (j+1)%N] + grid[(i-1), j] + grid[i, (j-1)]
+            energy += -neighbors*S
+        return energy/4
 
-
+#calculate_delta should be calculating the change in energy because of one flip
 def calculate_delta(grid: list[list[int]], i: int, j: int) -> int:
     return 0
 
