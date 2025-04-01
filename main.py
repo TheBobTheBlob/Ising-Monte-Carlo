@@ -27,6 +27,7 @@ def random_state(i: Decimal, j: Decimal) -> Decimal:
 
 
 SIZE = 10  # Size of the grid
+J = Decimal(1)
 
 # Spins are represented by 0 and 1
 # 0 = down
@@ -85,7 +86,8 @@ def calculate_energy(grid: list[list[Decimal]]) -> Decimal:
 
 # calculate_delta should be calculating the change in energy because of one flip
 def calculate_delta(grid: list[list[Decimal]], i: int, j: int) -> Decimal:
-    return Decimal(0)
+    neighbors = grid[(i + 1) % SIZE][j] + grid[i][(i + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
+    return Decimal(neighbors) * Decimal(grid[i][j]) 
 
 
 def calculate_beta() -> Decimal:
@@ -103,7 +105,7 @@ for i, row in enumerate(random_grid):
     for j, cell in enumerate(row):
         delta = calculate_delta(random_grid, i, j)
 
-        if delta <= 0:
+        if delta <= Decimal(0):
             random_grid[i][j] = flip_spin(cell)
         else:
             probability = calculate_beta()
