@@ -31,7 +31,7 @@ def random_state(i: Decimal, j: Decimal) -> Decimal:
 kB = Decimal(1.380649) * Decimal(10) ** Decimal(-23)
 print(f"Boltzmann constant: {kB}")
 T = 1
-SIZE = 10  # Size of the grid
+SIZE = 100  # Size of the grid
 J = Decimal(1)
 # beta = Decimal(1) / (kB * T)
 MICROSTATES = Decimal(2) ** (SIZE ** Decimal(2))
@@ -113,16 +113,19 @@ def flip_spin(value: Decimal) -> Decimal:
     else:
         return Decimal(-1)
 
+# Change this to the grid you want to use
+grid = alternating_grid
+
 
 energy_list = []
 for q in range(1000):
-    energy = calculate_energy(random_grid)
-    for i, row in enumerate(random_grid):
+    energy = calculate_energy(grid)
+    for i, row in enumerate(grid):
         for j, cell in enumerate(row):
-            delta = calculate_delta(random_grid, i, j)
+            delta = calculate_delta(grid, i, j)
 
             if delta <= Decimal(0):
-                random_grid[i][j] = flip_spin(cell)
+                grid[i][j] = flip_spin(cell)
                 energy += delta
             else:
                 probability = Decimal(math.e) ** (-calculate_beta() * delta)
@@ -130,14 +133,14 @@ for q in range(1000):
                 random_value = random.random()
 
                 if random_value < probability:
-                    random_grid[i][j] = flip_spin(cell)
+                    grid[i][j] = flip_spin(cell)
                     energy += delta
-        print(energy)
+        # print(energy)
     
     energy_list.append(float(energy))
     # print("\nModified Grid:")
-    # print_grid(random_grid)
-    # print(f"\nEnergy of the modified grid: {calculate_energy(random_grid)}")
+    # print_grid(grid)
+    # print(f"\nEnergy of the modified grid: {calculate_energy(grid)}")
 
 y = list(range(len(energy_list)))
 
