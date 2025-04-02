@@ -25,10 +25,13 @@ def random_state(i: Decimal, j: Decimal) -> Decimal:
     # Randomly returns either an up or down state
     return Decimal(random.choice([-1, 1]))
 
-kB = Decimal(1.380649 * 10 ** -23)
+
+kB = Decimal(1.380649) * Decimal(10) ** Decimal(-23)
+print(f"Boltzmann constant: {kB}")
 T = 293
 SIZE = 10  # Size of the grid
 J = Decimal(1)
+# beta = Decimal(1) / (kB * T)
 
 # Spins are represented by -1 and 1
 # -1 = down
@@ -61,7 +64,6 @@ alternating_grid = create_grid(SIZE, alternating_state)
 random_grid = create_grid(SIZE, random_state)
 
 
-
 def calculate_energy(grid: list[list[Decimal]]) -> Decimal:
     # Calculate_energy should be calculating the entire energy from scratch
 
@@ -71,6 +73,7 @@ def calculate_energy(grid: list[list[Decimal]]) -> Decimal:
             neighbors = grid[(i + 1) % SIZE][j] + grid[i][(i + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
             energy += -neighbors * grid[i][j]
     return Decimal(energy / 4)
+
 
 print("\nDown Grid:")
 print_grid(down_grid)
@@ -86,12 +89,10 @@ print_grid(random_grid)
 print(f"\nEnergy of the random grid: {calculate_energy(random_grid)}")
 
 
-
-
 # calculate_delta should be calculating the change in energy because of one flip
 def calculate_delta(grid: list[list[Decimal]], i: int, j: int) -> Decimal:
     neighbors = grid[(i + 1) % SIZE][j] + grid[i][(i + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
-    return Decimal(neighbors) * Decimal(grid[i][j]) 
+    return Decimal(neighbors) * Decimal(grid[i][j])
 
 
 def calculate_beta() -> Decimal:
