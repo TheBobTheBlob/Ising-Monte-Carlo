@@ -2,6 +2,7 @@ from typing import Callable
 import random
 from decimal import Decimal
 import math
+import matplotlib.pyplot as plt
 
 
 def down_state(i: Decimal, j: Decimal) -> Decimal:
@@ -29,7 +30,7 @@ def random_state(i: Decimal, j: Decimal) -> Decimal:
 
 kB = Decimal(1.380649) * Decimal(10) ** Decimal(-23)
 print(f"Boltzmann constant: {kB}")
-T = 293
+T = 1
 SIZE = 10  # Size of the grid
 J = Decimal(1)
 # beta = Decimal(1) / (kB * T)
@@ -113,20 +114,37 @@ def flip_spin(value: Decimal) -> Decimal:
         return Decimal(-1)
 
 
-for i, row in enumerate(random_grid):
-    for j, cell in enumerate(row):
-        delta = calculate_delta(random_grid, i, j)
+energy_list = []
+for q in range(1000):
+    energy = calculate_energy(random_grid)
+    for i, row in enumerate(random_grid):
+        for j, cell in enumerate(row):
+            delta = calculate_delta(random_grid, i, j)
 
-        if delta <= Decimal(0):
-            random_grid[i][j] = flip_spin(cell)
-        else:
-            probability = Decimal(math.e) ** (-calculate_beta() * 1)
-            random_value = random.random()
-
-            if random_value < probability:
+            if delta <= Decimal(0):
                 random_grid[i][j] = flip_spin(cell)
+                energy += delta
+            else:
+                probability = Decimal(math.e) ** (-calculate_beta() * delta)
+                # print(probability)
+                random_value = random.random()
 
+                if random_value < probability:
+                    random_grid[i][j] = flip_spin(cell)
+                    energy += delta
+        print(energy)
+    
+    energy_list.append(float(energy))
+    # print("\nModified Grid:")
+    # print_grid(random_grid)
+    # print(f"\nEnergy of the modified grid: {calculate_energy(random_grid)}")
 
-print("\nModified Grid:")
-print_grid(random_grid)
-print(f"\nEnergy of the modified grid: {calculate_energy(random_grid)}")
+y = list(range(len(energy_list)))
+
+plt.plot(y,energy_list, label="Energy")
+plt.xlabel("Iterations")
+plt.ylabel("Energy")
+plt.title("Energy vs Iterations")
+plt.legend()
+plt.grid()
+plt.show()
