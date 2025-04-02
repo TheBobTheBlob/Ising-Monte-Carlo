@@ -139,7 +139,7 @@ for q in range(1000):
     
     energy_list.append(float(energy))
     # print("\nModified Grid:")
-    # print_grid(grid)
+print_grid(grid)
     # print(f"\nEnergy of the modified grid: {calculate_energy(grid)}")
 
 y = list(range(len(energy_list)))
