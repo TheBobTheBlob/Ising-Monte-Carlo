@@ -31,7 +31,7 @@ def random_state(i: Decimal, j: Decimal) -> Decimal:
 kB = Decimal(1.380649) * Decimal(10) ** Decimal(-23)
 print(f"Boltzmann constant: {kB}")
 T = 1
-SIZE = 10  # Size of the grid
+SIZE = 100  # Size of the grid
 J = Decimal(1)
 # beta = Decimal(1) / (kB * T)
 MICROSTATES = Decimal(2) ** (SIZE ** Decimal(2))
@@ -132,7 +132,7 @@ for q in range(1000):
                 if random_value < probability:
                     random_grid[i][j] = flip_spin(cell)
                     energy += delta
-        print(energy)
+        # print(energy)
     
     energy_list.append(float(energy))
     # print("\nModified Grid:")
