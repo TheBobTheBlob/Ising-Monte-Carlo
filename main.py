@@ -73,7 +73,7 @@ def calculate_energy(grid: list[list[Decimal]]) -> Decimal:
     energy = Decimal(0)
     for i in range(SIZE):
         for j in range(SIZE):
-            neighbors = grid[(i + 1) % SIZE][j] + grid[i][(i + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
+            neighbors = grid[(i + 1) % SIZE][j] + grid[i][(j + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
             energy += -neighbors * grid[i][j]
     return Decimal(energy / 4)
 
@@ -94,7 +94,7 @@ print(f"\nEnergy of the random grid: {calculate_energy(random_grid)}")
 
 # calculate_delta should be calculating the change in energy because of one flip
 def calculate_delta(grid: list[list[Decimal]], i: int, j: int) -> Decimal:
-    neighbours = grid[(i + 1) % SIZE][j] + grid[i][(i + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
+    neighbours = grid[(i + 1) % SIZE][j] + grid[i][(j + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
 
     energy_before = neighbours * grid[i][j]
     energy_after = neighbours * flip_spin(grid[i][j])
@@ -114,7 +114,7 @@ def flip_spin(value: Decimal) -> Decimal:
         return Decimal(-1)
 
 # Change this to the grid you want to use
-grid = alternating_grid
+grid = random_grid
 
 
 energy_list = []
