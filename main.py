@@ -32,6 +32,7 @@ T = 293
 SIZE = 10  # Size of the grid
 J = Decimal(1)
 # beta = Decimal(1) / (kB * T)
+MICROSTATES = Decimal(2) ** (SIZE ** Decimal(2))
 
 # Spins are represented by -1 and 1
 # -1 = down
