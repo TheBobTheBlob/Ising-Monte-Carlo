@@ -29,6 +29,7 @@ kB = Decimal(1.380649 * 10 ** -23)
 T = 293
 SIZE = 10  # Size of the grid
 J = Decimal(1)
+MICROSTATES = Decimal(2) ** (SIZE ** Decimal(2))
 
 # Spins are represented by -1 and 1
 # -1 = down
