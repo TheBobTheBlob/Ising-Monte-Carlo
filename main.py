@@ -25,7 +25,8 @@ def random_state(i: Decimal, j: Decimal) -> Decimal:
     # Randomly returns either an up or down state
     return Decimal(random.choice([-1, 1]))
 
-
+kB = Decimal(1.380649 * 10 ** -23)
+T = 293
 SIZE = 10  # Size of the grid
 J = Decimal(1)
 
@@ -90,7 +91,8 @@ def calculate_delta(grid: list[list[Decimal]], i: int, j: int) -> Decimal:
 
 
 def calculate_beta() -> Decimal:
-    return Decimal(0)
+    beta = Decimal(1) / (kB * T)
+    return Decimal(beta)
 
 
 def flip_spin(value: Decimal) -> Decimal:
