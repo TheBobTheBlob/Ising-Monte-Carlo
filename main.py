@@ -1,6 +1,7 @@
 from typing import Callable
 import random
 from decimal import Decimal
+import math
 
 
 def down_state(i: Decimal, j: Decimal) -> Decimal:
@@ -114,7 +115,7 @@ for i, row in enumerate(random_grid):
         if delta <= Decimal(0):
             random_grid[i][j] = flip_spin(cell)
         else:
-            probability = calculate_beta()
+            probability = Decimal(math.e) ** (-calculate_beta() * 1)
             random_value = random.random()
 
             if random_value < probability:
