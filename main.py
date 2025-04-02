@@ -51,13 +51,25 @@ def create_grid(size: int, value_func: Callable) -> list[list[Decimal]]:
 def print_grid(grid: list[list[Decimal]]) -> None:
     # Print the grid in a readable format
     for row in grid:
-        print(" ".join(str(cell) for cell in row))
+        print(" ".join(f" {str(cell)}" if str(cell) == "1" else str(cell) for cell in row))
 
 
 down_grid = create_grid(SIZE, down_state)
 up_grid = create_grid(SIZE, up_state)
 alternating_grid = create_grid(SIZE, alternating_state)
 random_grid = create_grid(SIZE, random_state)
+
+
+
+def calculate_energy(grid: list[list[Decimal]]) -> Decimal:
+    # Calculate_energy should be calculating the entire energy from scratch
+
+    energy = Decimal(0)
+    for i in range(SIZE):
+        for j in range(SIZE):
+            neighbors = grid[(i + 1) % SIZE][j] + grid[i][(i + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
+            energy += -neighbors * grid[i][j]
+    return Decimal(energy / 4)
 
 print("\nDown Grid:")
 print_grid(down_grid)
@@ -70,17 +82,9 @@ print_grid(alternating_grid)
 
 print("\nRandom Grid:")
 print_grid(random_grid)
+print(f"\nEnergy of the random grid: {calculate_energy(random_grid)}")
 
 
-def calculate_energy(grid: list[list[Decimal]]) -> Decimal:
-    # Calculate_energy should be calculating the entire energy from scratch
-
-    energy = Decimal(0)
-    for i in range(SIZE):
-        for j in range(SIZE):
-            neighbors = grid[(i + 1) % SIZE][j] + grid[i][(i + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
-            energy += -neighbors * grid[i][j]
-    return Decimal(energy / 4)
 
 
 # calculate_delta should be calculating the change in energy because of one flip
