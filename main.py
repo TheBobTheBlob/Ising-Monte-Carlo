@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 # CONSTANTS
 
-kB = Decimal(1.380649) * Decimal(10) ** Decimal(-23)
+# kB = Decimal(1.380649) * Decimal(10) ** Decimal(-23)
+kB = Decimal(1)
 T = 1
 SIZE = 100  # Size of the grid
 J = Decimal(1)
@@ -74,15 +75,15 @@ def calculate_energy(grid: list[list[Decimal]]) -> Decimal:
         for j in range(SIZE):
             neighbors = grid[(i + 1) % SIZE][j] + grid[i][(j + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
             energy += -neighbors * grid[i][j]
-    return Decimal(energy / 4)
+    return energy / Decimal(2) / Decimal(SIZE) ** Decimal(2)
 
 
 def calculate_delta(grid: list[list[Decimal]], i: int, j: int) -> Decimal:
     # calculate_delta should be calculating the change in energy because of one flip
     neighbours = grid[(i + 1) % SIZE][j] + grid[i][(j + 1) % SIZE] + grid[i - 1][j] + grid[i][j - 1]
 
-    energy_before = neighbours * grid[i][j]
-    energy_after = neighbours * flip_spin(grid[i][j])
+    energy_before = (neighbours * grid[i][j]) / Decimal(2) / Decimal(SIZE) ** Decimal(2)
+    energy_after = (neighbours * flip_spin(grid[i][j])) / Decimal(2)  / Decimal(SIZE) ** Decimal(2)
 
     return energy_after - energy_before
 
@@ -119,7 +120,7 @@ grid = grids["alternating"]
 print(f"\nInitial Energy of the chosen grid: {calculate_energy(grid)}")
 
 energy_list = []
-for _ in range(1000):
+for _ in range(100):
     energy = calculate_energy(grid)
     for i, row in enumerate(grid):
         for j, cell in enumerate(row):
@@ -139,7 +140,7 @@ for _ in range(1000):
     energy_list.append(float(energy))
 
 
-print_grid(grid)
+# print_grid(grid)
 print(f"\nEnergy of the final grid: {calculate_energy(grid)}")
 
 x = list(range(len(energy_list)))
