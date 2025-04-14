@@ -1,21 +1,29 @@
 import random
 from decimal import Decimal
 import math
+import multiprocessing
+from dataclasses import dataclass
 
-import matplotlib.pyplot as plt
 import ising
+
+
+@dataclass
+class Result:
+    temperature: Decimal
+    average_energy: Decimal
+
 
 # EDITABLE CONSTANTS
 
 kB = Decimal(1)  # Boltzmann constant
-T = Decimal(2)  # Temperature
-SIZE = 100  # Size of the grid
+SIZE = 20  # Size of the grid
 J = Decimal(-1)  # Interaction energy
 
 
-def simulation(model: ising.Model) -> list[Decimal]:
+def simulation(model: ising.Model) -> Result:
     energy_list = [model.normalised_energy]
-    for _ in range(1000):
+    print(f"Starting simulation: size={model.size} T={model.temperature} J={model.j} kB={model.kB}")
+    for _ in range(300):
         for i, row in enumerate(model.grid):
             for j, _ in enumerate(row):
                 delta = model.calculate_delta(i, j)
@@ -31,24 +39,20 @@ def simulation(model: ising.Model) -> list[Decimal]:
 
         energy_list.append(model.normalised_energy)
 
-    return energy_list
+    average_energy = sum(energy_list[-100:]) / Decimal(100)
+    result = Result(temperature=model.temperature, average_energy=average_energy)
+
+    return result
 
 
-grid = ising.Model(SIZE, ising.alternating_state, T, kB, J)
-
-print(f"\nInitial Energy of the chosen grid: {grid.normalised_energy}")
-energy_list = simulation(grid)
-print(f"\nEnergy of the final grid: {grid.normalised_energy}")
+def model_vary_temperature(minimum_temperature, maximum_temperature):
+    for t in range(minimum_temperature, maximum_temperature + 1):
+        yield ising.Model(SIZE, ising.alternating_state, Decimal(t), kB, J)
 
 
-x = list(range(len(energy_list)))
-floated_energy = [float(i) for i in energy_list]
+if __name__ == "__main__":
+    pool = multiprocessing.Pool(processes=12)
+    results = pool.map(simulation, model_vary_temperature(1, 100))
 
-# Plotting the energy vs iterations
-plt.plot(x, floated_energy, label="Energy")
-plt.xlabel("Iterations")
-plt.ylabel("Energy")
-plt.title("Energy vs Iterations")
-plt.legend()
-plt.grid()
-plt.show()
+    with open("results.txt", "w+") as file:
+        file.write("\n".join(f"{result.temperature}, {result.average_energy}" for result in results))
