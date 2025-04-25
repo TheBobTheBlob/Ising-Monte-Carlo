@@ -7,11 +7,14 @@ import ising
 from matplotlib import pyplot as plt
 from typing import Generator
 
+
 @dataclass
 class Result:
     temperature: float
     average_energy: float
-    
+    specific_heat: float
+    magnetisation: float
+
 
 # EDITABLE CONSTANTS
 
@@ -39,8 +42,21 @@ def simulation(model: ising.Model, show_graph: bool = False) -> Result:
 
         energy_list.append(model.normalised_energy)
 
+    # average energy is the average of the last 100 energies
     average_energy = sum(energy_list[-100:]) / 100
-    result = Result(temperature=model.temperature, average_energy=average_energy)
+
+    # squared average energy is the average of the last 100 energies squared
+    squared_average_energy = sum([i**2 for i in energy_list[-100:]]) / 100
+
+    # specific heat is the variance of the energy divided by kB * T^2
+    specific_heat = (squared_average_energy - average_energy**2) / (kB * model.temperature**2)
+
+    result = Result(
+        temperature=model.temperature,
+        average_energy=average_energy,
+        specific_heat=specific_heat,
+        magnetisation=model.normalised_magnetisation,
+    )
 
     if show_graph:
         plt.plot(range(len(energy_list)), [i for i in energy_list], label=f"Simulation at T={model.temperature}")
@@ -54,7 +70,9 @@ def simulation(model: ising.Model, show_graph: bool = False) -> Result:
     return result
 
 
-def model_vary_temperature(minimum_temperature: int, maximum_temperature: int) -> Generator[tuple[ising.Model, bool], None, None]:
+def model_vary_temperature(
+    minimum_temperature: int, maximum_temperature: int
+) -> Generator[tuple[ising.Model, bool], None, None]:
     # Returns a tuple of (model, show_graph) for each temperature in the range
     # If show_graph is True, then a graph will be shown for that temperature
     # Graph will then need to be closed manually for the simulation to continue
@@ -67,4 +85,9 @@ if __name__ == "__main__":
     results = pool.starmap(simulation, model_vary_temperature(1, 100))
 
     with open("results.txt", "w+") as file:
-        file.write("\n".join(f"{result.temperature}, {round(result.average_energy, 6)}" for result in results))
+        file.write(
+            "\n".join(
+                f"{result.temperature}, {round(result.average_energy, 6)}, {round(result.specific_heat, 6)},  {round(result.magnetisation, 6)}"
+                for result in results
+            )
+        )

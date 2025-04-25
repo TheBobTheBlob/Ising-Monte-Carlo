@@ -113,3 +113,13 @@ class Model:
     def microstates(self) -> int:
         # Returns the number of microstates for the given grid size
         return 2 ** (self.sites)
+
+    @property
+    def magnetisation(self) -> int:
+        # Returns the magnetisation of the grid
+        return sum([sum(row) for row in self.grid])
+
+    @property
+    def normalised_magnetisation(self) -> float:
+        # Returns the normalised magnetisation of the grid
+        return self.magnetisation / self.sites
