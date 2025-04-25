@@ -54,7 +54,7 @@ def simulation(model: ising.Model, show_graph: bool = False) -> Result:
     return result
 
 
-def model_vary_temperature(minimum_temperature, maximum_temperature) -> Generator[tuple[ising.Model, bool]]:
+def model_vary_temperature(minimum_temperature, maximum_temperature) -> Generator[tuple[ising.Model, bool], None, None]:
     # Returns a tuple of (model, show_graph) for each temperature in the range
     # If show_graph is True, then a graph will be shown for that temperature
     # Graph will then need to be closed manually for the simulation to continue

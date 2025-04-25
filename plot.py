@@ -1,10 +1,21 @@
 from matplotlib import pyplot as plt
+import csv
+
 
 # Plotting the energy vs iterations
-# plt.plot(x, floated_energy, label="Energy")
-# plt.xlabel("Iterations")
-# plt.ylabel("Energy")
-# plt.title("Energy vs Iterations")
-# plt.legend()
-# plt.grid()
-# plt.show()
+with open('results.txt', 'r') as tve:
+    csv_tve = csv.reader(tve)
+    temperature = []
+    energy = []
+    for line in csv_tve:
+        temperature.append(float(line[0]))
+        energy.append(float(line[1]))
+
+
+    plt.plot(temperature, energy, label="Energy")
+    plt.xlabel("Temperature")
+    plt.ylabel("Energy")
+    plt.title("Energy vs Temperature")
+    plt.legend()
+    plt.grid()
+    plt.show()
