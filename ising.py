@@ -36,7 +36,7 @@ class Model:
     1 = up
     """
 
-    def __init__(self, size: int, create_func: Callable, temperature: int, kB: int, j: int) -> None:
+    def __init__(self, size: int, create_func: Callable, temperature: float, kB: int, j: int) -> None:
         self.size = size
         self.create_func = create_func
         self.temperature = temperature
