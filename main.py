@@ -14,6 +14,7 @@ class Result:
     average_energy: float
     specific_heat: float
     magnetisation: float
+    susceptibility: float
 
 
 # EDITABLE CONSTANTS
@@ -25,8 +26,9 @@ J = -1  # Interaction energy
 
 def simulation(model: ising.Model, show_graph: bool = False) -> Result:
     energy_list = [model.normalised_energy]
+    magnetisation_list = [model.normalised_magnetisation]
     print(f"Starting simulation: size={model.size} T={model.temperature} J={model.j} kB={model.kB}")
-    for _ in range(1000):
+    for _ in range(600):
         for i, row in enumerate(model.grid):
             for j, _ in enumerate(row):
                 delta = model.calculate_delta(i, j)
@@ -41,6 +43,7 @@ def simulation(model: ising.Model, show_graph: bool = False) -> Result:
                         model.flip_spin(i, j)
 
         energy_list.append(model.normalised_energy)
+        magnetisation_list.append(model.normalised_magnetisation)
 
     # average energy is the average of the last 100 energies
     average_energy = sum(energy_list[-100:]) / 100
@@ -51,11 +54,17 @@ def simulation(model: ising.Model, show_graph: bool = False) -> Result:
     # specific heat is the variance of the energy divided by kB * T^2
     specific_heat = (squared_average_energy - average_energy**2) / (kB * model.temperature**2)
 
+    # magnetic susceptibility
+    average_magnetisation = sum(magnetisation_list[-100:]) / 100
+    squared_average_magnetisation = sum([i**2 for i in magnetisation_list[-100:]]) / 100
+    susceptibility = model.sites / model.temperature * (squared_average_magnetisation - average_magnetisation**2)
+
     result = Result(
         temperature=model.temperature,
         average_energy=average_energy,
         specific_heat=specific_heat,
         magnetisation=model.normalised_magnetisation,
+        susceptibility=susceptibility,
     )
 
     if show_graph:
@@ -76,18 +85,18 @@ def model_vary_temperature(
     # Returns a tuple of (model, show_graph) for each temperature in the range
     # If show_graph is True, then a graph will be shown for that temperature
     # Graph will then need to be closed manually for the simulation to continue
-    for t in range(minimum_temperature, maximum_temperature + 1):
-        yield (ising.Model(SIZE, ising.alternating_state, t, kB, J), False)
+    for t in range(minimum_temperature, (maximum_temperature * 10) + 1):
+        yield (ising.Model(SIZE, ising.down_state, t / 10, kB, J), False)
 
 
 if __name__ == "__main__":
     pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-    results = pool.starmap(simulation, model_vary_temperature(1, 100))
+    results = pool.starmap(simulation, model_vary_temperature(1, 40))
 
     with open("results.txt", "w+") as file:
         file.write(
             "\n".join(
-                f"{result.temperature}, {round(result.average_energy, 6)}, {round(result.specific_heat, 6)},  {round(result.magnetisation, 6)}"
+                f"{result.temperature}, {round(result.average_energy, 6)}, {round(result.specific_heat, 6)},  {round(result.magnetisation, 6)}, {round(result.susceptibility, 6)}"
                 for result in results
             )
         )
