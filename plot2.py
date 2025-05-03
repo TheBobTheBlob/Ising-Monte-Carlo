@@ -3,7 +3,7 @@ import csv
 
 
 # Plotting the energy vs iterations
-with open("exponents.txt", "r") as tve:
+with open("exponents.py", "r") as tve:
     csv_tve = csv.reader(tve)
     size = []
     temperature = []
@@ -21,6 +21,8 @@ with open("exponents.txt", "r") as tve:
     axes[0].set_ylabel("Energy")
     axes[0].set_title("Energy vs Size")
     axes[0].legend()
+    axes[0].set_yscale('log')
+    axes[0].set_xscale('log')
 
     axes[1].plot(size, susceptibility, label="Sus")
     axes[1].set_xlabel("Size")
@@ -28,6 +30,8 @@ with open("exponents.txt", "r") as tve:
     axes[1].set_title("Sus vs Size")
     axes[1].legend()
     axes[1].grid()
+    axes[1].set_yscale('log')
+    axes[1].set_xscale('log')
 
 
     plt.show()
