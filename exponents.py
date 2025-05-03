@@ -24,7 +24,7 @@ def model_vary_temperature(
 if __name__ == "__main__":
     maxes = []
 
-    for i in range(4, 8):
+    for i in range(4, 21):
         pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
         results = pool.starmap(simulation, model_vary_temperature(1, 20, i*5))
 
