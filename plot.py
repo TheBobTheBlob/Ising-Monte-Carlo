@@ -37,17 +37,17 @@ with open('results.txt', 'r') as tve:
     # for i in range(len(magnetisation)):
     #     magnetisation[i] = abs(magnetisation[i])
 
-    axes[2].plot(temperature, magnetisation, label="Magnetisation")
+    axes[2].plot(temperature, magnetisation, label="Magnetization")
     axes[2].set_xlabel("Temperature")
-    axes[2].set_ylabel("Magnetisation")
-    axes[2].set_title("Magnetisation vs Temperature")
+    axes[2].set_ylabel("Magnetization")
+    axes[2].set_title("Magnetization vs Temperature")
     axes[2].legend()
     axes[2].grid()
 
     axes[3].plot(temperature, susceptibility, label="Susceptibility")
     axes[3].set_xlabel("Temperature")
     axes[3].set_ylabel("Susceptibility")
-    axes[3].set_title("Magnetisation vs Temperature")
+    axes[3].set_title("Susceptibility vs Temperature")
     axes[3].legend()
     axes[3].grid()
     
