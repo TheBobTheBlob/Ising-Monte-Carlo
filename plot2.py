@@ -3,7 +3,7 @@ import csv
 
 
 # Plotting the energy vs iterations
-with open("exponents.py", "r") as tve:
+with open("exponents.txt", "r") as tve:
     csv_tve = csv.reader(tve)
     size = []
     temperature = []

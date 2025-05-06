@@ -43,7 +43,7 @@ def simulation(model: ising.Model, show_graph: bool = False) -> Result:
                         model.flip_spin(i, j)
 
         energy_list.append(model.normalised_energy)
-        magnetisation_list.append(model.normalised_magnetisation)
+        magnetisation_list.append(abs(model.normalised_magnetisation))
 
     # average energy is the average of the last 100 energies
     average_energy = sum(energy_list[-100:]) / 100
@@ -52,12 +52,12 @@ def simulation(model: ising.Model, show_graph: bool = False) -> Result:
     squared_average_energy = sum([i**2 for i in energy_list[-100:]]) / 100
 
     # specific heat is the variance of the energy divided by kB * T^2
-    specific_heat = (squared_average_energy - average_energy**2) / (kB * model.temperature**2)
+    specific_heat = model.sites * (squared_average_energy - average_energy**2) / (kB * model.temperature**2)
 
     # magnetic susceptibility
     average_magnetisation = sum(magnetisation_list[-100:]) / 100
     squared_average_magnetisation = sum([i**2 for i in magnetisation_list[-100:]]) / 100
-    susceptibility = model.sites / model.temperature * (squared_average_magnetisation - average_magnetisation**2)
+    susceptibility = model.sites / (model.temperature * model.kB) * (squared_average_magnetisation - average_magnetisation**2)
 
     result = Result(
         temperature=model.temperature,

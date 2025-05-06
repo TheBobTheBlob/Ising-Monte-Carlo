@@ -34,8 +34,8 @@ with open('results.txt', 'r') as tve:
     axes[1].grid()
 
 
-    for i in range(len(magnetisation)):
-        magnetisation[i] = abs(magnetisation[i])
+    # for i in range(len(magnetisation)):
+    #     magnetisation[i] = abs(magnetisation[i])
 
     axes[2].plot(temperature, magnetisation, label="Magnetisation")
     axes[2].set_xlabel("Temperature")

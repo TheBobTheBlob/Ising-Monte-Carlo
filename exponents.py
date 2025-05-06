@@ -7,7 +7,7 @@ from main import  kB, J,  simulation
 
 @dataclass
 class Max:
-    temperature: float
+    specific_heat: float
     susceptibility: float
     size: int
 
@@ -24,18 +24,18 @@ def model_vary_temperature(
 if __name__ == "__main__":
     maxes = []
 
-    for i in range(4, 8):
+    for i in range(4, 21):
         pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-        results = pool.starmap(simulation, model_vary_temperature(1, 20, i*5))
+        results = pool.starmap(simulation, model_vary_temperature(1, 5, i*5))
 
-        maxes.append(Max(temperature=max(results, key=lambda x: x.specific_heat).specific_heat, susceptibility=max(results, key=lambda x: x.susceptibility).susceptibility, size=i*5))
+        maxes.append(Max(specific_heat=max(results, key=lambda x: x.specific_heat).specific_heat, susceptibility=max(results, key=lambda x: x.susceptibility).susceptibility, size=i*5))
     
     maxes.sort(key=lambda x: x.size)
 
     with open("exponents.txt", "w+") as file:
         file.write(
             "\n".join(
-                f"{result.size}, {round(result.temperature, 6)}, {round(result.susceptibility, 6)}"
+                f"{result.size}, {round(result.specific_heat, 6)}, {round(result.susceptibility, 6)}"
                 for result in maxes
             )
         )
