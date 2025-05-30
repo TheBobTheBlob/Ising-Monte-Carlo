@@ -1,5 +1,14 @@
-from typing import Callable
+import math
 import random
+from dataclasses import dataclass
+from typing import Callable, Generator
+
+from matplotlib import pyplot as plt
+
+# EDITABLE CONSTANTS
+kB = 1  # Boltzmann constant
+J = -1  # Interaction energy
+ITERATIONS = 600  # Number of iterations for the simulation
 
 
 # STATE GENERATORS
@@ -27,6 +36,9 @@ def alternating_state(i: int, j: int) -> int:
 def random_state(i: int, j: int) -> int:
     # Randomly returns either an up or down state
     return random.choice([-1, 1])
+
+
+# ISING MODEL CLASS
 
 
 class Model:
@@ -123,3 +135,85 @@ class Model:
     def normalised_magnetisation(self) -> float:
         # Returns the normalised magnetisation of the grid
         return self.magnetisation / self.sites
+
+
+# SIMULATION AND RESULTS
+
+
+@dataclass
+class Result:
+    temperature: float
+    average_energy: float
+    specific_heat: float
+    magnetisation: float
+    susceptibility: float
+
+
+def simulation(model: Model, show_graph: bool = False) -> Result:
+    # Runs a simulation of the Ising model for a given temperature and returns the results
+    # If show_graph is True, then a graph will be shown for the simulation
+
+    energy_list = [model.normalised_energy]
+    magnetisation_list = [model.normalised_magnetisation]
+    print(f"Starting simulation: size={model.size} T={model.temperature} J={model.j} kB={model.kB}")
+
+    for _ in range(ITERATIONS):
+        for i, row in enumerate(model.grid):
+            for j, _ in enumerate(row):
+                delta = model.calculate_delta(i, j)
+
+                if delta <= 0:
+                    model.flip_spin(i, j)
+                else:
+                    probability = math.e ** (-model.beta * delta)
+                    random_value = random.random()
+
+                    if random_value < probability:
+                        model.flip_spin(i, j)
+
+        energy_list.append(model.normalised_energy)
+        magnetisation_list.append(abs(model.normalised_magnetisation))
+
+    # average energy is the average of the last 100 energies
+    average_energy = sum(energy_list[-100:]) / 100
+
+    # squared average energy is the average of the last 100 energies squared
+    squared_average_energy = sum([i**2 for i in energy_list[-100:]]) / 100
+
+    # specific heat is the variance of the energy divided by kB * T^2
+    specific_heat = model.sites * (squared_average_energy - average_energy**2) / (kB * model.temperature**2)
+
+    # magnetic susceptibility
+    average_magnetisation = sum(magnetisation_list[-100:]) / 100
+    squared_average_magnetisation = sum([i**2 for i in magnetisation_list[-100:]]) / 100
+    susceptibility = (
+        model.sites / (model.temperature * model.kB) * (squared_average_magnetisation - average_magnetisation**2)
+    )
+
+    result = Result(
+        temperature=model.temperature,
+        average_energy=average_energy,
+        specific_heat=specific_heat,
+        magnetisation=model.normalised_magnetisation,
+        susceptibility=susceptibility,
+    )
+
+    if show_graph:
+        plt.plot(range(len(energy_list)), [i for i in energy_list], label=f"Simulation at T={model.temperature}")
+        plt.xlabel("Iterations")
+        plt.ylabel("Energy")
+        plt.title("Energy vs Iterations")
+        plt.legend()
+        plt.grid()
+        plt.show()
+
+    return result
+
+
+def vary_temperature(start_temp: int, end_temp: int, factor: int, size: int, starting_state: Callable) -> Generator[tuple[Model, bool], None, None]:
+    # Returns a tuple of (model, show_graph) for each temperature in the range
+    # If show_graph is True, then a graph will be shown for that temperature
+    # Graph will then need to be closed manually for the simulation to continue
+
+    for t in range(start_temp, (end_temp * factor) + 1):
+        yield (Model(size, starting_state, t / factor, kB, J), False)

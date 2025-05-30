@@ -1,21 +1,23 @@
-import random
+# Creates an animation of the Ising model simulation using matplotlib
+# Requires an ffmpeg executable to save the animation as a video file
+
 import math
+import random
+
+import matplotlib.animation as animation
+from matplotlib import pyplot as plt
 
 import ising
-from matplotlib import pyplot as plt
-import matplotlib.animation as animation
-
 
 # EDITABLE CONSTANTS
-
-kB = 1  # Boltzmann constant
+FFMPEG_PATH = r"" # Path to the ffmpeg executable
 SIZE = 100  # Size of the grid
-J = -1  # Interaction energy
+TEMPERATURE = 2.4  # Temperature of the simulation
+STARTING_STATE = ising.alternating_state  # Initial state of the grid
+FRAMES = 175  # Number of frames in the animation
 
 
-model = ising.Model(SIZE, ising.alternating_state, 2.4, kB, J)
-
-print(f"Starting simulation: size={model.size} T={model.temperature} J={model.j} kB={model.kB}")
+model = ising.Model(SIZE, STARTING_STATE, TEMPERATURE, ising.kB, ising.J)
 
 
 def update(frame):
@@ -36,14 +38,12 @@ def update(frame):
     return [mat]
 
 
-
-fig, ax = plt.subplots(figsize=(16, 9), dpi=1920/16)
+fig, ax = plt.subplots(dpi=1920 / 16)
 mat = ax.matshow(model.grid, cmap="hot", interpolation="nearest")
-ani = animation.FuncAnimation(fig, update, frames=150)
+ani = animation.FuncAnimation(fig, update, frames=FRAMES)
 
-plt.rcParams['animation.ffmpeg_path'] =r'C:\Users\Punit\AppData\Roaming\Portable Apps\yt-dlp + ffmpeg\ffmpeg.exe'
+plt.rcParams["animation.ffmpeg_path"] = FFMPEG_PATH
 FFwriter = animation.FFMpegWriter()
 ani.save("animation.mp4", writer=FFwriter)
 
 plt.show()
-
