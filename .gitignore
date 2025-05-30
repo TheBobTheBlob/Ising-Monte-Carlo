@@ -3,3 +3,7 @@ venv
 .mypy_cache
 *.prof
 *.pyc
+*.mp4
+*.txt
+!requirements.txt
+
