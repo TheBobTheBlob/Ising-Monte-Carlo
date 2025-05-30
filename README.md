@@ -53,7 +53,7 @@ python plot_temperature.py
 > [!IMPORTANT]  
 > The path to an `ffmpeg` executable needs to be entered into `animate.py` for it to successfully create an mp4 file
 
-Install dependencies using pip.
+Python 3.13 was originally used. Install dependencies using pip.
 
 ```shell
 python -m pip install -r requirements.txt
